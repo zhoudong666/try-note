@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- <div id="app">
+    <div> {{msg}}</div>
+    <div v-text='msg'>v-text='msg'</div>
+    <div v-html='msg'>v-html='msg'</div>
+    <input type="text" v-model='msg'>
+
+    <ul>
+      <li v-text='msg'>111</li>
+      <li v-text='msg'>111</li>
+    </ul>
+  </div>
+  <div id="app2">
+    <div> {{person.name}}--{{person.age}} </div>
+    <div v-text='person.name'>v-text='msg'</div>
+    <div v-html='person.age'>v-html='msg'</div>
+    <div v-html='str'>v-html='msg'</div>
+    <input type="text" v-model='person.name'>
+
+    <ul>
+      <li v-text='person.name'>111</li>
+      <li v-text='person.age'>111</li>
+    </ul>
+  </div> -->
+  <div id="app3">
+
+    <div v-text='msg'></div>
+    <div v-text='person.name'>person.name</div>
+    <div>{{person.name}}=={{person.age}}</div>
+    <div v-html='htmlStr'></div>
+    <div v-html='htmlStr'></div>
+    <input type="text" v-model='msg'>
+    <input type="text" v-model='person.name'>
+    <button v-on:click='clickHandle'>btn1 v-on</button>
+    <button @click='clickHandle'>btn1 @click</button>
+  </div>
+  <hr>
+  <!-- <div id="app3">
+    <div v-html='htmlStr'></div>
+    <div v-html='htmlStr'></div>
+  </div> -->
+</body>
+<script src="./Observer.js"></script>
+<script src="./vue.js"></script>
+<script>
+  var vm = new Vue({
+    // el: '#app',
+    // el: '#app2',
+    el: '#app3',
+    data: {
+      msg: '这是一条信息',
+      person: {
+        name: 'jordan',
+        age: 22,
+        height: {
+          num: 180
+        }
+      },
+      str: '<h2>这是h2</h2>',
+      htmlStr: '<h3>h3h3h3h</h3>'
+    },
+    methods: {
+      clickHandle() {
+        console.log('clickHandle');
+      }
+    }
+  })
+</script>
+
+</html>
