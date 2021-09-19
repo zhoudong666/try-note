@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- <iframe src="http://www.yeyecrw.com/index.php/vod/play/id/46085/sid/1/nid/1.html" frameborder="0" width="100%" height="1000px" ></iframe> -->
+
+    <div>
+        <h3>方式1 用a标签</h3>
+        <a href="Element.pdf">Download PDF</a>
+        <p>链接查看pdf</p>
+    </div>
+
+    <div>
+        <h3>方式2 embed标签查看pdf</h3>
+        <embed src="Element.pdf" type="application/pdf" width=800 height=400>
+    </div>
+
+    <div>
+        <h3>方式3 object标签查看pdf</h3>
+        <object data="Element.pdf" type="application/pdf" width="100%" height="300">
+            This browser does not support PDFs. Please download the PDF to view it: 
+            <a href="Element.pdf">Download PDF</a>
+        </object>
+
+    </div>
+    <div>
+        <h3>方式4 iframe标签查看pdf</h3>
+        <iframe src="Element.pdf" width=800 height=400>
+            This browser does not support PDFs. Please download the PDF to view it: 
+            <a href="Element.pdf">Download PDF</a>
+        </iframe>
+    </div>
+    <div>
+        <h3>方式5 插件jquery.media.js</h3>
+        jQuery Media Plugin是一款基于jQuery的网页媒体播放器插件，它支持大部分的网络多媒体播放器和多媒体格式 。“插件可以根据当前的脚本配置，自动将a标签替换成div，并生成object,
+        embed甚至是iframe代码，至于生成object还是embed，jQuery
+        Media会根据当前平台自动判别，因此兼容性方面非常出色。”所以这个插件的实现功能就是上面标签功能是一样的，那么在浏览器上面的显示也会是一样。
+
+
+            html端通过href来定位到需要打开的pdf文件。
+        <script type="text/javascript" src="./jquery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="./jquery.media.js"></script>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading" align="center">
+                <h2>预览pdf文件</h2>
+            </div>
+            <div class="panel-body">
+                <a class="media" href="Element.pdf"></a>
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                    $('a.media').media({ width: 800, height: 600 });
+                    $('a.mediase').media({ width: 800, height: 600 });
+                });
+            </script>
+
+        </div>
+    </div>
+</body>
+
+</html>
