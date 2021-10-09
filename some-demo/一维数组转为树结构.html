@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let list = [
+      { id: 1, parentId: '' },
+      { id: 2, parentId: '' },
+      { id: 3, parentId: 1 },
+      { id: 4, parentId: 2, },
+      { id: 5, parentId: 3 },
+      { id: 6, parentId: 3 },
+      { id: 7, parentId: 6 },
+    ]
+
+    // 将 存在树结构的 一维数组 转为 树结构
+    function listToTree(srcList) {
+      srcList = JSON.parse(JSON.stringify(srcList)); // 复制源数据,防止更改源数据
+      let result = []
+
+      // reduce收集所有节点信息存放在对象中，可以用forEach改写，不过代码会多几行
+      let nodeInfo = srcList.reduce((data, node) => {
+        // data[node.id] = node
+        // return data
+        // 简写
+        return data[node.id] = node, data
+      }, {})
+      // forEach给所有元素找妈妈
+      srcList.forEach(node => {
+        if (!node.parentId) return result.push(node)
+        let parent = nodeInfo[node.parentId]
+        parent.children = parent.children || []
+        parent.children.push(node)
+      })
+      return result
+    }
+
+    console.log(listToTree(list));
+  </script>
+</body>
+
+</html>
