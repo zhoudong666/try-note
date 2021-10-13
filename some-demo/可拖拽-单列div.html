@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>sortable.js例子</title>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+  <!-- <script src="https://www.itxst.com/package/sortable/sortable.min.js"></script> -->
+  <script src="./packages/sortable.min.js"></script>
+  <style>
+    #itxst {
+      margin: 10px auto;
+      width: 80%;
+    }
+
+    #itxst div {
+      padding: 6px;
+      background-color: #fdfdfd;
+      border: solid 1px #eee;
+      margin-bottom: 10px;
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="itxst">
+    <div data-id="1">item 1</div>
+    <div data-id="2">item 2</div>
+    <div data-id="3">item 3</div>
+  </div>
+
+  <div id="show_order"></div>
+
+  <script>
+    //获取对象
+    var el = document.getElementById('itxst');
+    //设置配置
+    var ops = {
+      animation: 1000,
+      //拖动结束
+      onEnd: function (evt) {
+        console.log(evt);
+        //获取拖动后的排序
+        var arr = sortable.toArray();
+        // alert(JSON.stringify(arr));
+        show_order.innerHTML = JSON.stringify(arr)
+      },
+    };
+    //初始化
+    var sortable = Sortable.create(el, ops);
+  </script>
+</body>
+
+</html>

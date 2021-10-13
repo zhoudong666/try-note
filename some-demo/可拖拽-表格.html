@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>vue.draggable table拖动表格的例子</title>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+  <script src="./packages/vue.min.js"></script>
+  <script src="./packages/sortable.min.js"></script>
+  <script src="./packages/vuedraggable.umd.min.js"></script>
+  <style>
+    /*定义要拖拽元素的样式*/
+    table.itxst {
+      color: #333333;
+      border: #ddd solid 1px;
+      border-collapse: collapse;
+    }
+
+    table.itxst th {
+      border: #ddd solid 1px;
+      padding: 8px;
+      background-color: #dedede;
+    }
+
+    table.itxst td {
+      border: #ddd solid 1px;
+      padding: 8px;
+      background-color: #ffffff;
+    }
+
+    table.itxst tr {
+      cursor: pointer;
+    }
+
+    table.itxst td.move:hover {
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body style="padding:10px;">
+  <div id="app">
+    <!--使用draggable组件-->
+    <div>点击第一列数字进行拖动，其他列拖拽无效</div>
+    <table class="itxst">
+      <tbody v-model="list" is='draggable' animation="500" force-fallback="true">
+        <tr v-for="item in list" :key="item.id">
+          <td style="width:50px" class="move">{{item.id}}</td>
+          <td style="width:250px">{{item.name}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    // debugger;
+    Vue.component('vuedraggable', window.vuedraggable)
+    var app = new Vue({
+      el: '#app',
+      components: {
+        vuedraggable: window.vuedraggable,
+      },
+      data() {
+        return {
+          drag: false,
+          list: [
+            { id: 1, name: 'www.itxst.com', g: 'g' },
+            { id: 2, name: 'www.baidu.com', g: 'g' },
+            { id: 3, name: 'www.taobao.com', g: 'g' },
+            { id: 4, name: 'www.google.com', g: 'g' }
+          ]
+        };
+      },
+      methods: {
+        onStart() {
+          this.drag = true;
+        },
+        onEnd() {
+          this.drag = false;
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
