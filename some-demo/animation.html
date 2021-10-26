@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>animation</title>
+</head>
+
+<style>
+  .parent {
+    position: relative;
+    border: 1px solid #000;
+  }
+
+  .son {
+    position: absolute;
+    left: 0;
+    border: 1px solid red;
+    height: 50px;
+    width: 50px;
+
+    /* animation: name duration timing-function delay iteration-count direction fill-mode play-state; */
+    animation: move 3s infinite, rotate1 3s infinite;
+  }
+
+  @keyframes move {
+    0% {
+      background: red;
+      left: 0;
+    }
+
+    100% {
+      background: blue;
+      left: calc(100% - 50px);
+    }
+  }
+
+  @keyframes rotate1 {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<body>
+  <div class="parent">
+    <div class="son">
+    </div>
+  </div>
+</body>
+
+</html>
