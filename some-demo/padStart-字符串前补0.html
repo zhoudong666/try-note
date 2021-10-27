@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  // 官网的polyfill
+  if (!String.prototype.padStart) {
+    String.prototype.padStart = function padStart(targetLength, padString) {
+      targetLength = targetLength >> 0; //truncate if number or convert non-number to 0;
+      padString = String((typeof padString !== 'undefined' ? padString : ' '));
+      if (this.length > targetLength) {
+        return String(this);
+      } else {
+        targetLength = targetLength - this.length;
+        if (targetLength > padString.length) {
+          padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
+        }
+        return padString.slice(0, targetLength) + String(this);
+      }
+    };
+  }
+
+  var str1 = '88';
+  console.log(str1.padStart(4, '0'));
+
+  // ---------------------------------------------
+  // ---------------------------------------------
+  // 自定义写的方法
+  function foo(str, len = 0, padStr = '') {
+    if (str.length >= len || !padStr) return str;
+    var strArr = str.split('')
+    for (let i = str.length; i < len; i++) {
+      strArr.unshift(padStr)
+    }
+    return strArr.join('')
+  }
+  console.log(foo('99', 5, '$'));
+
+</script>
+
+</html>

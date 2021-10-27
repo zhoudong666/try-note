@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="./packages/jquery.min.js"></script>
+</head>
+<style>
+  .content {
+    height: 80vh;
+    width: 50vw;
+    border: 1px solid red;
+    overflow: auto;
+  }
+
+  .content>div {
+    height: 500px;
+    width: 80%;
+    border: 2px dashed blue;
+  }
+
+  #link1 {
+    background-color: rgb(211, 231, 240);
+  }
+
+  #link2 {
+    background-color: rgb(243, 188, 234);
+  }
+
+  #link4 {
+    background-color: rgb(146, 238, 200);
+  }
+
+  #link5 {
+    background-color: rgb(236, 245, 160);
+  }
+</style>
+
+<body>
+  <div class="a-container">
+    <a href="#link1">link1</a>
+    <a href="#link2">link2</a>
+    <a href="#link3">link3</a>
+    <a href="#link4">link4</a>
+    <a href="#link5">link5</a>
+  </div>
+
+  <div class="content">
+    <div id="link1"> link1 -- content</div>
+    <div id="link2"> link2 -- content</div>
+    <div id="link3"> link3 -- content</div>
+    <div id="link4"> link4 -- content</div>
+    <div id="link5"> link5 -- content</div>
+  </div>
+</body>
+
+<script>
+  $('.a-container a').on('click', function () {
+    let el = $($(this).attr('href'))
+    let cont = $('.content')
+
+    cont.stop().animate({ scrollTop: cont.scrollTop() + el.offset().top - cont.offset().top })
+  })
+</script>
+
+</html>

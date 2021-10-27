@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    /**
+     * 格式化金额
+     * @param v 金额
+     * @param c 保留的小数位数  默认 2 位
+     * @param d 整数与小数间的符号  默认 .
+     * @param t 整数部分 每 3 位使用的分隔符号  默认 ,
+     * @returns {string}
+     */
+    function fmtMoney(v, c, d, t) {
+      try {
+        v = (v + "").replace(/,/g, "") * 1;
+        var p = v < 0 ? " " : "";
+        c = c || 2;
+        v = v.toFixed(c);
+        c = Math.abs(c) + 1 ? c : 2;
+        d = d || ".";
+        t = t === '' ? '' : (t || ",");
+        var m = /(\d+)(?:(\.\d+)|)/.exec(v + "");
+        x = m[1].length > 3 ? m[1].length % 3 : 0;
+        var part1 = p + (x ? m[1].substr(0, x) + t : "");
+        var part2 = m[1].substr(x).replace(/(\d{3})(?=\d)/g, "$1" + t);
+        var part3 = (c ? d + (+m[2] || 0).toFixed(c).substr(2) : "")
+        return part1 + part2 + part3
+      } catch (e) {
+        return "0.00";
+      }
+    }
+
+    console.log(fmtMoney(123456789.22, 4, '.'));
+    console.log(fmtMoney('123456', 3, '.'));
+    console.log(fmtMoney('1,2,3,45', 3, '.'));
+  </script>
+</body>
+
+</html>
