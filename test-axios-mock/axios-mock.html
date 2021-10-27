@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>axios-mock</title>
+  <script src="./jquery-3.5.1.min.js"></script>
+  <script src="./mock-min.js"></script>
+  <script src="./lodash.min.js"></script>
+  <!-- <script src="./lodash.core.min.js"></script> -->
+</head>
+
+<body>
+  <h1>用axios请求 mock拦截请求并返回 模拟数据</h1>
+  <div>
+    Mock.mock(/user/, 'get', { name: 123, type: 'get' });
+    // 拦截请求地址中包含 user 字段的 get 请求
+  </div>
+  <div>
+    Mock.mock("/user", 'post', { name: 123, type: 'post' });
+    // 拦截请求地址为 user 的 post 请求
+  </div>
+</body>
+
+<script>
+  Mock.mock(/user/, 'get', { name: 123, type: 'get' });
+  Mock.mock("/user", 'post', { name: 123, type: 'post' });
+  $.get("/user", { param: 'aa' }, function (res) {
+    console.log(res);
+  }, 'json');
+  $.post("/user", { param: 'aa' }, function (res) {
+    console.log(res);
+  }, 'json');
+
+
+  // lodash 方法小测
+  // _.times(['aa', 'bb'], function (a) {
+  //   console.log(a);
+  // })
+
+  var objA = {
+    "name": "戈德斯文", "car": "宝马", a: function (a) {
+      console.log(a);
+    }
+  };
+  var objB = {
+    "name": "柴硕", "loveEat": true, t: function (t) {
+      console.log(t);
+    }
+  };
+  // console.log(_.assign(objA, objB));
+
+  var t = _.cloneDeepWith(objA)
+  console.log(t.a === objA.a);
+
+</script>
+
+</html>
