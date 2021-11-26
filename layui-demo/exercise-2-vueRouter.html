@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./libs/vue.js"></script>
+    <script src="./libs/vueRouter-334.js"></script>
+    <style>
+        a {
+            margin: 0 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <p>
+            <router-link to='/com-a'>com-a</router-link>
+            <router-link to='/com-a/1'>com-a/1</router-link>
+            <router-link to='/com-a/2'>com-a/2</router-link>
+            <router-link to='/com-a/3'>com-a/3</router-link>
+            <router-link to='/com-g/3'>com-g/3</router-link>
+            <router-link to='/com-b'>com-b</router-link>
+        </p>
+        <div style="border:1px solid red">
+            <router-view></router-view>
+        </div>
+
+    </div>
+
+    <script>
+        Vue.component('com-a', {
+            template: `<div>com-a</div>`
+        })
+
+        Vue.component('com-b', {
+            template: `<div>com-b</div>`
+        })
+        var comA = {
+            template: `<div>com-a 参数uid为:{{$route.params.uid}} </div>`
+        }
+        var comG = {
+            props: ['uid', 'name', 'age'],
+            template: `<div>com-g 参数uid为:{{uid}} --- name:{{name}} --- age:{{age}} </div>`
+        }
+
+        var comB = {
+            template: `<div>
+                    <div>com-b</div>
+                    <div>
+                         <router-link to='/com-b/com-c'>com-c</router-link>
+                          <router-link to='/com-b/com-d'>com-d</router-link>
+                          <hr/>
+                          <router-view/>
+                        </div>
+                    </div>`
+        }
+        var comC = {
+            template: `<div>ccccccccc</div>`
+        }
+        var comD = {
+            template: `<div>dddddd</div>`
+        }
+
+        var router = new VueRouter({
+            routes: [
+                { path: '/', redirect: '/com-a' },
+                { path: '/com-a', component: comA },
+                { path: '/com-a/:uid', component: comA },
+                { path: '/com-g/:uid', component: comG, props: route => ({ name: 'zhou', age: 12, uid: route.params.uid }) },
+                {
+                    path: '/com-b', component: comB, redirect: '/com-b/com-d', children: [
+                        { path: '/com-b/com-c', component: comC },
+                        { path: '/com-b/com-d', component: comD },
+                    ]
+                },
+            ]
+        })
+
+        var vm = new Vue({
+            el: '#app',
+            data: {},
+            methods: {},
+            router
+        });
+    </script>
+</body>
+
+</html>

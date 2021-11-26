@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue-watch使用</title>
+    <script src="./packages/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <com-a :title-name='tip' @count-add='handle' :arr="arr">
+            <template v-slot="slotProps">
+                <strong v-if='slotProps.info=="cc"'>
+                    {{slotProps.info}}
+                </strong>
+                <span v-else>{{slotProps}}</span>
+            </template>
+        </com-a>
+        <div>
+            子传父---{{count}}
+        </div>
+
+        <hr />
+
+        <com-b :p-Name='pName' tip='123'></com-b>
+        <hr />
+        <input type="text" v-model.lazy="uname"><span>tip:{{tip}}</span>
+        <input type="text" v-model="obj.age">
+        <div>
+            <button @click="change">change arr by splice</button>
+            <button @click="set">change arr by vm.$set()</button>
+            <button @click="Vueset">change arr by Vue.set()</button>
+        </div>
+        <ul>
+            <li v-for="item in arr">{{item}}</li>
+        </ul>
+    </div>
+</body>
+<script>
+    var hub = new Vue();
+
+    Vue.component('com-a', {
+        props: ['titleName', 'arr'],
+        template: `<div>
+                <div>{{titleName}}</div>
+                <button @click="$emit('count-add',5)">count-add</button>
+                <button @click="handle">brother-add</button>
+                <div>
+                    <ul>
+                        <li >
+                            <slot :titleN='titleName'></slot>
+                            </li>
+                        <li v-for="item in arr">
+                            <slot :info='item' >{{item}}</slot>
+                            </li>
+                        </ul>
+                    
+                    </div>
+
+                </div>`,
+        methods: {
+            handle() {
+                console.log(12);
+
+                hub.$emit('brother-add', 2)
+            }
+        }
+    })
+    Vue.component('com-b', {
+        props: ['pName', 'tip'],
+        data: function () {
+            return {
+                num: 0,
+            }
+        },
+        template: `<div>{{pName}}-- 
+                <div>num:{{num}}</div>
+                </div>`,
+        mounted: function () {
+            hub.$on('brother-add', (val) => {
+                this.num += val;
+            })
+        }
+    })
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            pName: 'pName111',
+            uname: '',
+            tip: '提示信息',
+            obj: {
+                age: 12
+            },
+            arr: ['aa', 'bb', 'cc', 'dd', 'ee'],
+            count: 1,
+        },
+        watch: {
+            uname: function (val) {
+                this.tip = '查询中...';
+                this.checkName(val);
+            },
+            'obj.age': function (val) {
+                console.log(this.obj.age);
+
+            }
+        },
+        methods: {
+            handle(val) {
+                this.count += val;
+            },
+            checkName: function (name) {
+                setTimeout(() => {
+                    if (name == 'admin') {
+                        this.tip = '用户已存在'
+                    } else {
+                        this.tip = '可以使用'
+                    }
+                }, 2000)
+            },
+            // --------------------------数组  响应式改变的三种方法------------------------------
+            change() {
+                this.arr.splice(2, 1, 'change by splice')
+            },
+            set() {
+                // 写法1:
+                vm.$set(this.arr, 3, 'change by vm.$set')
+
+
+            },
+            Vueset() {
+                // 写法2:
+                Vue.set(this.arr, 4, 'change by Vue.set')
+
+            }
+            //------------------------------------------------
+        },
+    })
+</script>
+
+</html>

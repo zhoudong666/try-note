@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  .head {
+    position: fixed;
+    height: 30px;
+    width: 140px;
+    z-index: 99;
+  }
+
+  .content {
+    height: 100vh;
+    background-color: #ccc;
+    overflow: auto;
+    position: relative;
+  }
+
+  .one {
+    height: 200px;
+    border: 2px solid yellow;
+  }
+
+  .serve {
+    height: 2000px;
+    width: 100%;
+    border: 1px solid green;
+  }
+</style>
+
+<body>
+
+  <button class="head">head </button>
+
+  <div class="content">
+    <div class="one"></div>
+    <div class="one"></div>
+    <div class="one"></div>
+    <div class="serve">
+
+    </div>
+  </div>
+
+
+
+</body>
+
+<script>
+
+  var nav2 = document.querySelector('.head') // 获取点击的元素
+  var serve = document.querySelector('.serve') // 获取要滚动到哪个元素
+  var content = document.querySelector('.content');
+
+  nav2.addEventListener('click', () => {
+    let aa = 4 // 设置一个变量  使滚动由快到慢
+    let scollHeight = serve.offsetTop // 获取元素到顶部的距离
+    var rect = document.querySelector('.serve').getBoundingClientRect();
+    //获取元素距离文档顶部的距离
+    var top = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0);
+
+    console.log(top);
+
+    console.log(scollHeight)
+    // content.scrollTo({
+    //   top: 1000,
+    //   // behavior: "smooth"
+    // })
+    // 设置定时器
+    // const location = setInterval(() => {
+    //   const speed = scollHeight / aa  // 每次滚动多少
+    //   // 当前滚动位置小于元素到顶部的距离
+    //   if (content.scrollTop <= scollHeight) {
+    //     content.scrollTop += speed // 和回到顶部不同，需要每次加上步长值 
+    //     aa += 3 // 每走一次 使下次的步长值变小
+    //   } else {
+
+    //     clearInterval(location)
+    //   }
+    // }, 30)
+
+    // animate(serve, 0)
+  })
+
+  // content.addEventListener('scroll', function (e) {
+  //   console.log(e.target.scrollTop);
+  //   console.log(e.target.scrollHeight);
+  //   console.log(e.target.clientHeight);
+  // })
+  function animate(obj, target, callback) {
+    // console.log(callback);  callback = function() {}  调用的时候 callback()
+
+    // 先清除以前的定时器，只保留当前的一个定时器执行
+    clearInterval(obj.timer);
+    obj.timer = setInterval(function () {
+      // 步长值写到定时器的里面
+      // 把我们步长值改为整数 不要出现小数的问题
+      // var step = Math.ceil((target - obj.offsetLeft) / 10);
+      var step = (target - obj.offsetTop) / 10;
+      step = step > 0 ? Math.ceil(step) : Math.floor(step);
+      if (obj.offsetTop == target) {
+        // 停止动画 本质是停止定时器
+        clearInterval(obj.timer);
+        // 回调函数写到定时器结束里面
+        // if (callback) {
+        //     // 调用函数
+        //     callback();
+        // }
+        callback && callback();
+      }
+      // 把每次加1 这个步长值改为一个慢慢变小的值  步长公式：(目标值 - 现在的位置) / 10
+      obj.style.top = obj.offsetTop + step + 'px';
+
+    }, 15);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  wx.request({
+    url: config.domain + params.url, //接口请求地址
+    data: params.data,
+    header: {
+      // 'content-type': params.method == "GET" ? 'application/x-www-form-urlencoded' : 'application/json;charset=utf-8',
+      'Authorization': params.login ? undefined : wx.getStorageSync('token')
+    },
+    method: params.method == undefined ? "POST" : params.method,
+    dataType: 'json',
+    responseType: params.responseType == undefined ? 'text' : params.responseType,
+    success: function (res) {
+      if (res.statusCode == 200) {
+        //如果有定义了params.callBack，则调用 params.callBack(res.data)
+        if (params.callBack) {
+          params.callBack(res.data);
+        }
+
+      } else if (res.statusCode == 500) {
+        wx.showToast({
+          title: "服务器出了点小差",
+          icon: "none"
+        });
+      } else if (res.statusCode == 401) {
+        // 添加到请求队列
+        globalData.requestQueue.push(params);
+        // 是否正在登陆
+        if (!globalData.isLanding) {
+          globalData.isLanding = true
+          //重新获取token,再次请求接口
+          getToken();
+        }
+      } else if (res.statusCode == 400) {
+        wx.showToast({
+          title: res.data,
+          icon: "none"
+        })
+
+      } else {
+        //如果有定义了params.errCallBack，则调用 params.errCallBack(res.data)
+        if (params.errCallBack) {
+          params.errCallBack(res);
+        }
+      }
+      if (!globalData.isLanding) {
+        wx.hideLoading();
+      }
+    },
+    fail: function (err) {
+      wx.hideLoading();
+      wx.showToast({
+        title: "服务器出了点小差",
+        icon: "none"
+      });
+    }
+  })
+
+
+
+
+
+
+
+</script>
+
+</html>

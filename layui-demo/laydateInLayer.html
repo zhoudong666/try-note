@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <script src="./layui/layui.all.js"></script>
+    <style>
+        .layui-icon {
+            font-size: 40px;
+            color: red;
+        }
+
+        .layui-layer-adminRight {
+            top: 50px !important;
+            bottom: 0;
+            box-shadow: 1px 1px 10px rgba(0, 0, 0, .1);
+            border-radius: 0;
+            overflow: auto
+        }
+
+        .layui-anim-tt {
+            -webkit-animation-name: layui-tt;
+            animation-name: layui-tt
+        }
+
+        /* @-webkit-keyframes layui-tt {
+
+                from {
+                    transform: translate(200%, 0)
+                }
+
+                to {
+                    transform: translate(0, 0)
+                }
+            } */
+
+        @keyframes layui-tt {
+            from {
+                transform: translate(200%, 0)
+            }
+
+            to {
+                transform: translate(0, 0)
+            }
+        }
+
+        /* .layui-anim-tt, */
+        .layui-anim-tt.layer-anim-close {
+            -webkit-animation-name: layui-aa 2s;
+            animation-name: layui-aa 2s
+        }
+
+        @keyframes layui-aa {
+            from {
+                transform: translate(0, 0);
+                opacity: 1
+            }
+
+            to {
+                transform: translate(200%, 0);
+                opacity: 1
+            }
+        }
+
+        @-webkit-keyframes layui-aa {
+
+            from {
+                transform: translate(0, 0);
+                opacity: 1
+            }
+
+            to {
+                transform: translate(200%, 0);
+                opacity: 1
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        @-webkit-keyframes am-right_show {
+            0% {
+                opacity: 0;
+                -webkit-transform: translateX(2000px);
+                transform: translateX(2000px)
+            }
+
+            100% {
+                opacity: 1;
+                -webkit-transform: translateX(0);
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes am-right_show {
+            0% {
+                opacity: 0;
+                -webkit-transform: translateX(400px);
+                -ms-transform: translateX(400px);
+                transform: translateX(400px)
+            }
+
+            100% {
+                opacity: 1;
+                -webkit-transform: translateX(0);
+                -ms-transform: translateX(0);
+                transform: translateX(0)
+            }
+        }
+
+
+        .layer-anim-07 {
+            -webkit-animation: am-right_show .6s;
+            animation: am-right_show .6s;
+        }
+    </style>
+</head>
+
+
+<body>
+    <button id="btn" style="width: 500px;height: 500px;">button</button>
+    <i class="layui-icon layui-icon-loading  layui-anim layui-anim-rotate layui-anim-loop"></i>
+    <div id="date" style="padding:10px; display: none">
+        <input type="text" class="layui-input" id="dateInput">
+    </div>
+    <script>
+        var layer = layui.layer, $ = layui.jquery, laydate = layui.laydate
+        var tt = '2020-5-19'
+        var param = {};
+
+
+        var ind;
+        $(document).on('click', '.layui-layer-shade', function () {
+            console.log(123);
+
+            var $layero = $('#layui-layer' + ind);
+            $layero.animate({
+                left: $layero.offset().left + $layero.width()
+            }, 400, function () {
+                layer.close(ind);
+            });
+            return false;
+        })
+        $('#btn').on('click', function () {
+            var oo = ''
+
+            console.log(param);
+
+            if (!oo) {
+                param.date = tt
+            } else {
+                param.date = oo;
+            }
+            console.log(param);
+
+            ind = layer.open({
+                type: 1,
+                offset: 'r',
+                area: ['300px', '100%'],
+                title: '你好，layer。',
+                shade: 0.1,
+                anim: -1,
+                skin: 'layui-layer layui-layer-page layui-anim layer-anim-07',
+                // isOutAnim: false,
+                move: false,
+                shadeClose: false,
+                btn: ['111', '222'],
+                content: '<div style="padding: 30px;" >右侧滑动效果</div>',
+                cancel: function (index) {
+                    var $layero = $('#layui-layer' + index);
+                    $layero.animate({
+                        left: $layero.offset().left + $layero.width()
+                    }, 400, function () {
+                        layer.close(index);
+                    });
+                    return false;
+                },
+                yes: function (index) {
+                    var $layero = $('#layui-layer' + index);
+                    $layero.animate({
+                        left: $layero.offset().left + $layero.width()
+                    }, 400, function () {
+                        layer.close(index);
+                    });
+                    return false;
+                },
+                btn2: function (index) {
+                    var $layero = $('#layui-layer' + index);
+                    $layero.animate({
+                        left: $layero.offset().left + $layero.width()
+                    }, 400, function () {
+                        layer.close(index);
+                    });
+                    return false;
+                }
+            });
+
+
+            // layer.open({
+            //     offset: 'r',
+            //     anim: -1,
+            //     skin: 'layui-layer layui-layer-page layer-anim-07',
+            //     type: 1,
+            //     area: ['500px', '400px'],
+            //     content: $('#date'),
+            //     btn: ['111', '222'],
+            //     id: 'layId',
+            //     success: function () {
+            //         laydate.render({
+            //             elem: '#dateInput',
+            //             value: param.date,
+            //             isInitValue: true,
+            //             trigger: 'click',
+            //             done: function (value, date, endDate) {
+            //                 param.date = value;
+            //                 console.log(param);
+
+            //             },
+            //         })
+            //     },
+            //     yes: function () {
+            //         // console.log(tt);
+            //         console.log(param);
+            //     },
+            // })
+
+        })
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <script src="./layui/layui.all.js"></script>
+    <style>
+        .layer-anim-right-slide {
+            -webkit-animation: am-right_show .6s;
+            animation: am-right_show .6s;
+        }
+
+        @-webkit-keyframes am-right_show {
+            0% {
+                opacity: 0;
+                -webkit-transform: translateX(2000px);
+                transform: translateX(2000px)
+            }
+
+            100% {
+                opacity: 1;
+                -webkit-transform: translateX(0);
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes am-right_show {
+            0% {
+                opacity: 0;
+                -webkit-transform: translateX(400px);
+                -ms-transform: translateX(400px);
+                transform: translateX(400px)
+            }
+
+            100% {
+                opacity: 1;
+                -webkit-transform: translateX(0);
+                -ms-transform: translateX(0);
+                transform: translateX(0)
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+    <button id="btn" style="width: 500px;height: 500px;">button</button>
+    <script>
+        var layer = layui.layer, $ = layui.jquery, laydate = layui.laydate
+
+
+        // 需要全局定义一个弹框索引
+        var ind;
+
+        $(document).on('click', '.layui-layer-shade', function () {
+            // 点击背景 关闭 执行动画
+            closeSlide(ind)
+
+            return false;
+        })
+        $('#btn').on('click', function () {
+
+            ind = layer.open({
+                type: 1,
+                offset: 'r',
+                area: ['300px', '100%'],
+                title: '你好，layer。',
+
+                // 配置
+                shade: 0.1,
+                anim: -1,
+                skin: 'layer-anim-right-slide',
+                shadeClose: false,
+
+
+                btn: ['111', '222'],
+                content: '<div style="padding: 30px;" >右侧滑动效果</div>',
+                cancel: function (index) {
+
+                    // 右上角关闭 执行动画
+                    closeSlide(index)
+
+                    return false;
+                },
+                yes: function (index) {
+
+                    // 确定 按钮执行动画
+                    closeSlide(index)
+
+                    return false;
+                },
+                btn2: function (index) {
+
+                    // 取消 按钮执行动画
+                    closeSlide(index)
+
+                    return false;
+                }
+            });
+
+
+
+        })
+        function closeSlide(index) {
+            var $layero = $('#layui-layer' + index);
+            $layero.animate({
+                left: $layero.offset().left + $layero.width()
+            }, 400, function () {
+                layer.close(index);
+            });
+        }
+
+
+    </script>
+
+</body>
+
+</html>

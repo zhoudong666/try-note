@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="./layui/css/layui.css">
+  <!-- <script src="./layui/layui.all.js"></script> -->
+  <script src="./layui/layui.js"></script>
+  <script src="./layui/vue.js"></script>
+</head>
+
+<body>
+  <form class="layui-form" lay-filter='aaa_form'>
+    <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <div class="layui-form-item">
+      <label class="layui-form-label">name</label>
+      <div class="layui-input-block">
+        <input type="text" name="name" placeholder="请输入" lay-verify='required' autocomplete="off" class="layui-input">
+        <!-- <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input"> -->
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">age-number</label>
+      <div class="layui-input-block">
+        <input type="text" name="age" placeholder="请输入" lay-verify='number' autocomplete="off" class="layui-input">
+        <!-- <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input"> -->
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">下拉选择框</label>
+      <div class="layui-input-block">
+        <select name="interest" lay-filter="aihao" lay-verify='required'>
+          <option value="">请选择</option>
+          <option value="0">写作</option>
+          <option value="1">阅读</option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">复选框</label>
+      <div class="layui-input-block">
+        <input type="checkbox" name="like['0']" title="写作" lay-skin="primary" value='true'>
+        <input type="checkbox" name="like['1']" title="阅读" lay-skin="primary" value='false'>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">开关关</label>
+      <div class="layui-input-block">
+        <input type="checkbox" lay-skin="switch" name='switch1'>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">开关开</label>
+      <div class="layui-input-block">
+        <input type="checkbox" checked lay-skin="switch" name='switch2'>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">单选框</label>
+      <div class="layui-input-block">
+        <input type="radio" name="sex" value="0" title="男">
+        <input type="radio" name="sex" value="1" title="女" checked>
+      </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+      <label class="layui-form-label">请填写描述</label>
+      <div class="layui-input-block">
+        <textarea placeholder="请输入内容" class="layui-textarea" name='textarea' lay-verify='required'></textarea>
+      </div>
+    </div>
+    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    <!-- <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div> -->
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+  </form>
+
+  <hr>
+  <button class="layui-btn" id='outValidate'>立即提交</button>
+  <button type="reset" class="layui-btn layui-btn-primary" id="reset">重置</button>
+
+</body>
+<script>
+
+  layui.use(['layer', 'form', 'jquery', 'table', 'element'], function () {
+    var $ = layui.jquery;
+    table = layui.table
+    form = layui.form
+    element = layui.element
+
+    // 获取校验结果, 返回布尔值
+    form.__proto__.my_verify = function (formId) {
+      if (!formId) return layui.layer.msg('请填写 formId !');
+      var $ = layui.jquery,
+        layer = layui.layer,
+        device = layui.device(),
+        isPass = null,
+        defaultVerifyObj = form.config.verify,
+        redBorderStyle = "layui-form-danger",
+        formArea = $("#" + formId)[0] || $('[lay-filter=' + formId + ']')[0],
+        allValidEl = $(formArea).find("*[lay-verify]");
+      layui.each(allValidEl, function (index1, currDom) {
+        var currEl = $(this),
+          varifyArr = currEl.attr("lay-verify").split("|"),
+          verType = currEl.attr("lay-verType"),
+          currElVal = currEl.val();
+        if (currEl.removeClass(redBorderStyle), layui.each(varifyArr, function (index2, validKey) {
+          var flag, msg = "", isFn = "function" == typeof defaultVerifyObj[validKey];
+          if (defaultVerifyObj[validKey]) {
+            var flag = isFn ? msg = defaultVerifyObj[validKey](currElVal, currDom) : !defaultVerifyObj[validKey][0].test(currElVal);
+            if (msg = msg || defaultVerifyObj[validKey][1], "required" === validKey && (msg = currEl.attr("lay-reqText") || msg), flag) {
+              var attachEl = function () {
+                var isIgnore = "string" == typeof currEl.attr("lay-ignore"),
+                  isSelect = "select" !== currDom.tagName.toLowerCase(),
+                  isCheckRadio = !/^checkbox|radio$/.test(currDom.type)
+                return isIgnore || isSelect && isCheckRadio ? currEl : currEl.next()
+              }()
+              if ("tips" === verType) {
+                layer.tips(msg, attachEl, { tips: 1 })
+              } else if ("alert" === verType) {
+                layer.alert(msg, { title: "提示", shadeClose: !0 })
+              } else {
+                layer.msg(msg, { icon: 5, shift: 6 })
+              }
+              return device.android || device.ios || setTimeout(function () {
+                var isSelect = "select" === currDom.tagName.toLowerCase()
+                if (isSelect) {
+                  $(currDom).next().find('input').focus();
+                } else {
+                  currDom.focus()
+                }
+              }, 7), currEl.addClass(redBorderStyle), isPass = !0
+            }
+          }
+        }), isPass) return isPass
+      });
+      return !isPass;
+    }
+    // 重置表单
+    form.__proto__.my_reset = function (formId) {
+      if (!formId) return layui.layer.msg('请填写 formId !');
+      var form = layui.jquery("#" + formId)[0] || layui.jquery('[lay-filter=' + formId + ']')[0]
+      form.reset()
+      setTimeout(function () {
+        form.render();
+      }, 50);
+    }
+
+
+
+
+
+    $('#outValidate').on('click', function (params) {
+      console.log(form.my_verify("aaa_form"));
+      console.log(form.val("aaa_form"));
+    })
+
+    $('#reset').on('click', function (e) {
+      form.my_reset("")
+      console.log(form.val("aaa_form"));
+    })
+
+    $(window).focus(function (e) {
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    })
+  });
+
+
+
+
+</script>
+
+</html>

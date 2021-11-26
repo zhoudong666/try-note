@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <link rel="stylesheet" href="../layui/css/layui.css">
+        <script src="../layui/layui.all.js"></script>
+        <style>
+            .layui-icon {
+                font-size: 40px;
+                color: red;
+            }
+        </style>
+    </head>
+
+
+    <body>
+        <button id="btn">button</button>
+        <div id="date" style="padding:10px; border:1px solid red; height: 600px;">
+            <iframe id="myFrame" src="childPage.html" width="100%" height="100%"></iframe>
+        </div>
+        <script>
+            var layer = layui.layer, $ = layui.jquery, laydate = layui.laydate, element = layui.element
+            var tt = '2020-5-19'
+            var param = {};
+
+
+
+            // window.onload = function () {
+            //     setTimeout(() => {
+            //         var height = window
+            //         console.log(height);
+
+            //         var iframe = document.getElementById('myFrame');
+            //         // h = iframe.contentDocument.body.scrollHeight;
+            //         // $('#date').css('height', h)
+            //         console.log(iframe.contentWindow.document);
+            //     }, 1000);
+
+
+            // };
+
+            // $('iframe').load(function () {
+            //     setTimeout(iResize, 50);
+            //     // Safari and Opera need a kick-start.
+            //     var iSource = document.getElementById('your-iframe-id').src;
+            //     document.getElementById('your-iframe-id').src = '';
+            //     document.getElementById('your-iframe-id').src = iSource;
+            // });
+            // function iResize() {
+            //     document.getElementById('your-iframe-id').style.height =
+            //         document.getElementById('your-iframe-id').contentWindow.document.body.offsetHeight + 'px';
+            // }
+
+
+            // var iframe = document.getElementById('myFrame');
+            // t = iframe.contentDocument.body.scrollHeight;
+            // // $('#date').css('height', h + 'px')
+            // console.log(t);
+
+            // h = iframe.contentDocument.body.scrollHeight;
+            // $('#date').css('height', h)
+            // console.log(h);
+
+
+            // $('#btn').on('click', function () {
+            //     console.log(12);
+
+            // })
+            // $("#myFrame").on("load", function () {//iframe加载完后 高度自适应。
+            //     var myFrame = document.getElementById("myFrame").contentDocument || document.getElementById("myFrame").contentWindow.document, mainWrapHeight = $(window).height() - 49 - 21,
+            //         frame_height = myFrame.documentElement.scrollHeight;
+            //     $("#myFrame").height(100);
+            // });
+
+
+
+        </script>
+
+    </body>
+
+</html>
