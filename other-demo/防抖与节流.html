@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防抖与节流</title>
+</head>
+
+<body>
+  <h1>介绍</h1>
+  <p>
+    在进行窗口的resize、scroll，输入框内容校验等操作时，如果事件处理函数调用的频率无限制，会加重浏览器的负担，导致用户体验非常糟糕。此时我们可以采用debounce（防抖）和throttle（节流）的方式来减少调用频率，同时又不影响实际效果。
+  </p>
+  <h1>区别：</h1>
+  <p>
+    函数节流不管事件触发有多频繁，都会保证在规定时间内一定会执行一次真正的事件处理函数，而函数防抖只是在最后一次事件后才触发一次函数。 比如在页面的无限加载场景下，我们需要用户在滚动页面时，每隔一段时间发一次 Ajax
+    请求，而不是在用户停下滚动页面操作时才去请求数据。这样的场景，就适合用节流技术来实现。
+  </p>
+
+  <h1>函数防抖</h1>
+  <p>
+    函数防抖（debounce）：当持续触发事件时，一定时间段内没有再触发事件，事件处理函数才会执行一次，如果设定的时间到来之前，又一次触发了事件，就重新开始延时。如下图，持续触发scroll事件时，并不执行handle函数，当1000毫秒内没有触发scroll事件时，才会延时触发scroll事件。
+  </p>
+
+
+  <h1>函数节流</h1>
+  <p>
+    函数节流（throttle）：当持续触发事件时，保证一定时间段内只调用一次事件处理函数。节流通俗解释就比如我们水龙头放水，阀门一打开，水哗哗的往下流，秉着勤俭节约的优良传统美德，我们要把水龙头关小点，最好是如我们心意按照一定规律在某个时间间隔内一滴一滴的往下滴。如下图，持续触发scroll事件时，并不立即执行handle函数，每隔1000毫秒才会执行一次handle函数。
+  </p>
+
+
+  <div style='height: 1000px;border:1px solid red;'></div>
+
+</body>
+
+<script>
+  // 防抖
+  function debounce(func, wait = 500) {
+    if (typeof func !== 'function') throw new TypeError('need a function arguments')
+    let timeid = null;
+    let result;
+
+    return function () {
+      let context = this;
+      let args = arguments;
+      if (timeid) clearTimeout(timeid);
+      timeid = setTimeout(function () {
+        result = func.apply(context, args);
+      }, wait);
+    }
+  }
+  // 处理函数
+  function handle() {
+    console.log('防抖', Math.random());
+  }
+  // 滚动事件
+  // 当持续触发scroll事件时，事件处理函数handle只在停止滚动1000毫秒之后才会调用一次，
+  // 也就是说在持续触发scroll事件的过程中，事件处理函数handle一直没有执行。
+
+  // window.addEventListener('scroll', debounce(handle, 1000));
+
+
+  // 函数节流主要有两种实现方法：时间戳和定时器。
+
+  // 时间戳
+  var throttle = function (func, delay) {
+    var prev = Date.now();
+    return function () {
+      var context = this;
+      var args = arguments;
+      var now = Date.now();
+      if (now - prev >= delay) {
+        func.apply(context, args);
+        prev = Date.now();
+      }
+    }
+  }
+  function handle() {
+    console.log('节流-时间戳', Math.random());
+  }
+  // window.addEventListener('scroll', throttle(handle, 1000));
+
+
+  // 节流throttle代码（定时器）：
+  var throttle = function (func, delay) {
+    var timer = null;
+    return function () {
+      var context = this;
+      var args = arguments;
+      if (!timer) {
+        timer = setTimeout(function () {
+          func.apply(context, args);
+          timer = null;
+        }, delay);
+      }
+    }
+  }
+  function handle() {
+    console.log('节流-定时器', Math.random());
+  }
+  window.addEventListener('scroll', throttle(handle, 1000));
+</script>
+
+</html>
