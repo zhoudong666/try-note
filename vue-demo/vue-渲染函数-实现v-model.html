@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vue-渲染函数-实现v-model </title>
+  <script src="./packages/vue.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <form>
+      <fieldset>
+        <legend>vue官网的渲染函数示例 vue-渲染函数-实现v-model</legend>
+        <mm-input :value='aaa' v-on:input='inputCh'></mm-input>
+
+        <h3> vm.aaa 的值: {{aaa}}</h3>
+      </fieldset>
+    </form>
+  </div>
+</body>
+<script>
+
+  Vue.component('mm-input', {
+    props: ['value'],
+    render: function (createElement) {
+      var that = this;
+      return createElement('input', {
+        domProps: {
+          value: that.value
+        },
+        on: {
+          input: function (e) {
+            that.$emit('input', e.target.value)
+          }
+        }
+      })
+    }
+  })
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      aaa: '1'
+    },
+    methods: {
+      inputCh: function (e) {
+        this.aaa = e
+      }
+    },
+  })
+</script>
+
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue-渲染函数 </title>
+    <script src="./packages/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <form>
+            <fieldset>
+                <legend>vue官网的渲染函数示例 </legend>
+                <anchored-heading :level="2">Hello world!</anchored-heading>
+            </fieldset>
+
+            <fieldset>
+                <legend>my-fff 渲染函数生成的组件 测试1 </legend>
+                <my-fff :items='[]'></my-fff>
+            </fieldset>
+
+            <fieldset>
+                <legend>my-fff 渲染函数生成的组件 测试2 </legend>
+                <my-fff :items='[{name:"123"}]'></my-fff>
+            </fieldset>
+
+        </form>
+
+    </div>
+    <hr>
+    说明:
+    <h1>createElement 参数</h1>
+    <pre>
+// @returns {VNode}
+createElement(
+  // {String | Object | Function}  ============== 参数1 ==============
+  // 一个 HTML 标签名、组件选项对象，或者
+  // resolve 了上述任何一种的一个 async 函数。必填项。
+  'div',
+
+  // {Object}                      ============== 参数2 ==============
+  // 一个与模板中 attribute 对应的数据对象。可选。
+  {
+    // (详情见下一方)
+  },
+
+  // {String | Array}              ============== 参数3 ==============
+  // 子级虚拟节点 (VNodes)，由 `createElement()` 构建而成，
+  // 也可以使用字符串来生成“文本虚拟节点”。可选。
+  [
+    '先写一些文字',
+    createElement('h1', '一则头条'),
+    createElement(MyComponent, {
+      props: {
+        someProp: 'foobar'
+      }
+    })
+  ]
+)
+    </pre>
+
+    <h4> ============== 参数2 ============== </h4>
+    <pre>
+        {
+            // 与 `v-bind:class` 的 API 相同，
+            // 接受一个字符串、对象或字符串和对象组成的数组
+            'class': {
+              foo: true,
+              bar: false
+            },
+            // 与 `v-bind:style` 的 API 相同，
+            // 接受一个字符串、对象，或对象组成的数组
+            style: {
+              color: 'red',
+              fontSize: '14px'
+            },
+            // 普通的 HTML attribute
+            attrs: {
+              id: 'foo'
+            },
+            // 组件 prop
+            props: {
+              myProp: 'bar'
+            },
+            // DOM property
+            domProps: {
+              innerHTML: 'baz'
+            },
+            // 事件监听器在 `on` 内，
+            // 但不再支持如 `v-on:keyup.enter` 这样的修饰器。
+            // 需要在处理函数中手动检查 keyCode。
+            on: {
+              click: this.clickHandler
+            },
+            // 仅用于组件，用于监听原生事件，而不是组件内部使用
+            // `vm.$emit` 触发的事件。
+            nativeOn: {
+              click: this.nativeClickHandler
+            },
+            // 自定义指令。注意，你无法对 `binding` 中的 `oldValue`
+            // 赋值，因为 Vue 已经自动为你进行了同步。
+            directives: [
+              {
+                name: 'my-custom-directive',
+                value: '2',
+                expression: '1 + 1',
+                arg: 'foo',
+                modifiers: {
+                  bar: true
+                }
+              }
+            ],
+            // 作用域插槽的格式为
+            // { name: props => VNode | Array<VNode> }
+            scopedSlots: {
+              default: props => createElement('span', props.text)
+            },
+            // 如果组件是其它组件的子组件，需为插槽指定名称
+            slot: 'name-of-slot',
+            // 其它特殊顶层 property
+            key: 'myKey',
+            ref: 'myRef',
+            // 如果你在渲染函数中给多个元素都应用了相同的 ref 名，
+            // 那么 `$refs.myRef` 会变成一个数组。
+            refInFor: true
+          }
+    </pre>
+</body>
+<script>
+
+    var getChildrenTextContent = function (children) {
+        return children.map(function (node) {
+            return node.children ? getChildrenTextContent(node.children) : node.text
+        }).join('')
+    }
+
+    Vue.component('anchored-heading', {
+        props: {
+            level: {
+                type: Number,
+                required: true
+            }
+        },
+        render: function (createElement) {
+            // 创建 kebab-case 风格的 ID
+            var headingId = getChildrenTextContent(this.$slots.default)
+                .toLowerCase()
+                .replace(/\W+/g, '-')
+                .replace(/(^-|-$)/g, '')
+
+            return createElement(
+                'h' + this.level,
+                {
+                    on: {
+                        click: function (e) {
+                            console.log(11);
+                        }
+                    }
+                },
+                [
+                    createElement('a', {
+                        attrs: {
+                            name: headingId,
+                            href: '#' + headingId
+                        },
+                        on: {
+                            click: function (e) {
+                                console.log(222, e);
+                            }
+                        }
+                    }, this.$slots.default)
+                ]
+            )
+        },
+    })
+
+    Vue.component('my-fff', {
+        props: {
+            items: {
+                type: Array,
+                default: () => []
+            }
+        },
+        render: function (createElement) {
+            if (this.items.length) {
+                return createElement('ul', this.items.map(i => createElement('li', i.name)))
+            } else {
+                return createElement('div', 'no message')
+            }
+        }
+    })
+    var vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {},
+    })
+</script>
+
+</html>
