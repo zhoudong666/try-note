@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+    #demo {
+      background-color: #fff;
+      width: 600px;
+      height: 600px;
+      /* margin: auto; */
+    }
+
+    img {
+      height: 200px;
+      width: 200px;
+    }
+
+    .red {
+      background-color: red;
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="demo-container">
+    <button id="btn">下载PDF文件 </button>
+    <hr>
+    <div id="demo">
+      <div class="red"></div>
+      <img src="./pic.png" alt="" crossOrigin='Anonymous'>
+      <span>adfafaagagfadf</span>
+    </div>
+  </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<script>
+
+  document.getElementById("btn").onclick = function () {
+    ooo(document.getElementById('demo'))
+  }
+
+  function ooo(el, size = 4) {
+    // 当分辨率是72像素/英寸时，A4纸长宽像素分别是842×595。
+    const obj = {
+      A4: { width: 592.28, height: 841.89 },
+      A5: { width: 841.89 / 2, height: 592.28 },
+      A6: { width: 592.28 / 2, height: 841.89 / 2 }
+    }
+    // const el = el// document.getElementById('demo')// this.$refs.content
+    const sss = size - 3
+    const paperType = 'A' + size
+    const paperSizeObj = obj['A' + size]
+
+    html2canvas(el, {
+      background: '#f7f7f7',
+      useCORS: true, // 解决图片跨越的问题
+      taintTest: false,
+      height: el.offsetHeight,
+      width: el.offsetWidth,
+      scale: 4
+    }).then(function (canvas) {
+      var contentWidth = canvas.width
+      var contentHeight = canvas.height
+      // 一页pdf显示html页面生成的canvas高度;
+      var pageHeight = (contentWidth / paperSizeObj.width) * paperSizeObj.height
+      // 未生成pdf的html页面高度
+      var leftHeight = contentHeight
+      // 页面偏移
+      var position = 0
+      // a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+      var imgWidth = paperSizeObj.width - 60 / sss
+      var imgHeight = ((paperSizeObj.width - 60 / sss) / contentWidth) * contentHeight
+
+      var pageData = canvas.toDataURL('image/png', 1.0)
+      var pdf = new jsPDF('', 'pt', paperType)
+
+      // 有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+      // 当内容未超过pdf一页显示的范围，无需分页
+      if (leftHeight < pageHeight) {
+        pdf.addImage(pageData, 'PNG', 40 / sss, 60 / sss, imgWidth, imgHeight)
+      } else {
+        while (leftHeight > 0) {
+          pdf.addImage(pageData, 'PNG', 0, position, imgWidth, imgHeight)
+          leftHeight -= pageHeight
+          position -= 841.89
+          // 避免添加空白页
+          if (leftHeight > 0) pdf.addPage()
+        }
+      }
+      pdf.save(`设备二维码${paperType}.pdf`)
+    })
+  }
+</script>
+
+</html>
