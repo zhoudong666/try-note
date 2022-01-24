@@ -10,3 +10,5 @@
 
 2. 使用 node 启动 server
 3. 打开 game1 和 game2 俩页面, 点击就可达到相互交互效果
+
+ps: nodejs-websocket registry link https://github.com/sitegui/nodejs-websocket#readme
