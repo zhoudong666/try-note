@@ -27,7 +27,7 @@ function Promise(executor) {
     if (that.status === "pending") {
       that.status = "rejected";
       that.error = val;
-      that.onrejectedCallback.forEach((item) => item(that.error));
+      that.onrejectedCallback.forEach((item) => item());
     }
   }
 
@@ -66,6 +66,31 @@ Promise.prototype.then = function (onfufilled, onrejected) {
 
 Promise.prototype.catch = function (err) {
   return this.then(() => {}, err);
+};
+
+Promise.all = function (values) {
+  return new Promise((res, rej) => {
+    let arr = [];
+    let num = 0;
+    function tempSave(index, value) {
+      arr[index] = value;
+      if (++num === values.length) res(arr);
+    }
+
+    values.forEach((item, index) => {
+      if (item.then && typeof item.then === "function") {
+        item.then.call(
+          item,
+          (data) => {
+            tempSave(index, data);
+          },
+          rej
+        );
+      } else {
+        tempSave(index, item);
+      }
+    });
+  });
 };
 
 module.exports = Promise;
