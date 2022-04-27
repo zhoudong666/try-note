@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>合格证</title>
+  <meta name="viewport" content="width=device-width">
+  <style type='text/css'>
+    html,
+    body,
+    div {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 打印item容器相对定位 */
+    .print-item {
+      position: relative;
+      display: inline-block;
+
+      width: calc(50% - 10mm);
+      height: 70mm;
+      margin: 2mm 4mm 0;
+      /* border: 1px solid red; */
+    }
+
+    /* 打印的item所有内容都绝对定位 */
+    .print-item div {
+      position: absolute;
+      left: 40%;
+      font-size: 4mm;
+      -webkit-print-color-adjust: exact;
+      overflow: hidden;
+    }
+
+    .model {
+      top: 31mm
+    }
+
+    .number {
+      top: 38mm
+    }
+
+    .inspector {
+      top: 45mm
+    }
+
+    .date {
+      top: 52mm
+    }
+
+    /* 强制每个打印item为一页 */
+    .PageCss {
+      page-break-before: auto;
+      page-break-after: always;
+    }
+
+    #printContent {
+      margin: 0 10mm;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="position: fixed;top: 10px;right: 500px;z-index: 999999;">
+    <input type="button" onclick=" print()" value="打印" />
+  </div>
+  <hr>
+  <div>
+    <div id="printContent"></div>
+  </div>
+
+
+
+  <script src="jquery.min.js"></script>
+  <!-- jquery的打印插件 -->
+  <script src="../jQuery.print.js"></script>
+
+  <script>
+    // 获取模拟参数
+    function getList() {
+      var list = []
+      for (let i = 0; i < 10; i++) {
+        list.push({
+          "model": "型号--" + i,
+          "number": "编号--" + i,
+          "inspector": "检验--" + i,
+          "date": "日期--" + i,
+        })
+      }
+      return list;
+    }
+
+    // 根据数据拼接模板
+    function getTemp(data) {
+      var arr = [];
+      $.each(data, function (index, item) {
+        var temp = ` 
+      <div class="print-item">
+        <div class="model">${item.model}</div>
+        <div class="number">${item.number}</div>
+        <div class="inspector">${item.inspector}</div>
+        <div class="date">${item.date}</div>
+      </div>
+      ${(index + 1) % 8 === 0 ? '<div class="PageCss"></div>' : ''}`
+        arr.push(temp)
+      })
+      return arr.join('')
+    }
+
+    // 步骤一  获取模拟参数
+    var list = getList();
+    //  步骤二  根据数据拼接模板
+    var temp = getTemp(list);
+    $('#printContent').html(temp)
+    // 步骤三  调用打印 
+    function print() {
+      jQuery('#printContent').print({
+        globalStyles: true,  // Boolean	是否包含父文档的样式
+        mediaPrint: true,  // Boolean是否包含media='print'的链接标签。会被globalStyles选项覆盖
+        stylesheet: null,  // URL - string	外部样式表的URL地址
+        noPrintSelector: ".no-print",  // 任何可用的jQuery选择器 不想打印的元素的jQuery选择器
+        iframe: true,  // 默认true，如果没有iframe选择器被传入会创建一个隐藏的iframe	任何可用的jQuery选择器或Boolean	是否使用一个iframe来替代打印表单的弹出窗口
+        append: null,  // Boolean	是否将用户更新的表单输入框内容作为打印内容（通过迭代每一个表单元素来实现）
+        prepend: null,
+        manuallyCopyFormValues: false,
+        deferred: $.Deferred(function () { // 任何可用的jQuery.Deferred对象 当打印函数被调用时的jQuery.Deferred对象
+
+        })
+      });
+    }
+  </script>
+</body>
+
+</html>

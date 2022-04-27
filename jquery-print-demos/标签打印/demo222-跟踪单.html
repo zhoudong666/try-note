@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>demo222-跟踪单</title>
+        <meta name="viewport" content="width=device-width">
+        <style type='text/css'>
+            /* ================= 通用类 start ================= */
+            html,
+            body,
+            div {
+                margin: 0;
+                padding: 0;
+            }
+
+            /* 打印item容器相对定位 */
+            .print-item {
+                position: relative;
+            }
+
+            /* 打印的item所有内容都绝对定位 */
+            .print-item * {
+                margin: 0;
+                padding: 0;
+                font-size: 4mm;
+                position: absolute;
+                -webkit-print-color-adjust: exact;
+                overflow: hidden;
+            }
+
+            /* 水平线 垂直线 默认宽高 */
+            .h-line,
+            .v-line {
+                display: inline-block;
+                background: #000;
+            }
+
+            /* 水平线 */
+            .h-line {
+                height: 0.2mm;
+                width: 99mm;
+            }
+
+            /* 垂直线 */
+            .v-line {
+                height: 99mm;
+                width: 0.2mm;
+            }
+
+            /* 文字在盒子里居中对齐 */
+            .tac {
+                text-align: center;
+            }
+
+            /* 文字在盒子里两端对齐 */
+            .tsb {
+                text-align-last: justify;
+                text-align: justify;
+            }
+
+            /* 强制每个打印item为一页 */
+            .PageCss {
+                page-break-before: auto;
+                page-break-after: always;
+            }
+
+            /* 字体加粗 */
+            .strong {
+                font-weight: 700;
+            }
+
+            .letter-spacing1 {
+                letter-spacing: 1mm;
+                font-size: 4mm;
+            }
+
+            /* 用于分隔打印item之间的距离 */
+            .gap {
+                height: 10px;
+            }
+
+            /* 瞬时间旋转90度 */
+            .rotate90 {
+                transform-origin: top left;
+                transform: translate(0, 0) rotate(90deg);
+                left: 66mm;
+                top: 10mm;
+            }
+
+            /* ================= 通用类 end ================= */
+
+
+            .height7 {
+                height: 7mm;
+            }
+
+            .line-height7 {
+                line-height: 7mm;
+            }
+
+            /*--------------*/
+            .top0 {
+                top: 0mm;
+            }
+
+            .left82 {
+                left: 82mm;
+            }
+
+            .width88 {
+                width: 86mm;
+            }
+
+            .left58 {
+                left: 58mm;
+            }
+
+            .left42 {
+                left: 42mm;
+            }
+
+            .qrcode {
+                width: 12mm;
+                height: 12mm;
+                top: 68mm;
+                left: 15mm;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div style="position: fixed;top: 10px;right: 500px;z-index: 999999;">
+            <input type="button" onclick=" print()" value="打印" />
+        </div>
+        <div style="margin: 0 300px">
+            <div id="printContent" style="margin: 0 1mm">
+            </div>
+        </div>
+
+        <script src="jquery.min.js"></script>
+        <!-- jquery的打印插件 -->
+        <script src="../jQuery.print.js"></script>
+
+        <!-- 此js插件用于将需要转换的内容转为 二维码 -->
+        <script type="text/javascript" src="jquery.qrcode.min.js"></script>
+        <script>
+            // 获取模拟参数
+            function getList() {
+                var list = [{
+                    "yb1": "吉林四平公主岭大龄物流园66kV智能变",
+                    "yb2": "B24609202882-03-01",
+                    "yb3": "监控主机柜 A01",
+                }]
+                for (let i = 0; i < 1; i++) {
+                    list.push({
+                        "yb1": "三峡大坝--" + i,
+                        "yb2": "WBS88--" + i,
+                        "yb3": "888--" + i,
+                    })
+                }
+                return list;
+            }
+
+            // 根据数据拼接模板
+            function getTemp(data) {
+                var arr = [];
+                $.each(data, function (index, item) {
+                    var canvas = $('<div></div>').qrcode(item.yb2).find('canvas').get(0);
+                    var img_src = canvas.toDataURL('image/jpg');//将二维码转换为图片
+                    var temp = `
+                     <div class="print-item" style="height: 87mm;">
+                    <span class="top0 left82 width88 tac rotate90 height7 line-height7">${item.yb1}</span>
+                    <span class="top0 left58 width88 tac rotate90 height7 line-height7">${item.yb2}</span>
+                    <span class="top0 left42 width88 tac rotate90 height7 line-height7">${item.yb3}</span>
+                    <img class="qrcode" src="${img_src}" alt="" />
+                </div>`
+                    arr.push(temp)
+                })
+                arr.push()
+                return arr.join('')
+            }
+
+            // 步骤一  获取模拟参数
+            var list = getList();
+            //  步骤二  根据数据拼接模板
+            var temp = getTemp(list);
+            $('#printContent').html(temp)
+            // 步骤三  调用打印 
+            function print() {
+                console.log(888)
+                jQuery('#printContent').print({
+                    globalStyles: true,  // Boolean	是否包含父文档的样式
+                    mediaPrint: true,  // Boolean是否包含media='print'的链接标签。会被globalStyles选项覆盖
+                    stylesheet: null,  // URL - string	外部样式表的URL地址
+                    noPrintSelector: ".no-print",  // 任何可用的jQuery选择器 不想打印的元素的jQuery选择器
+                    iframe: true,  // 默认true，如果没有iframe选择器被传入会创建一个隐藏的iframe	任何可用的jQuery选择器或Boolean	是否使用一个iframe来替代打印表单的弹出窗口
+                    append: null,  // Boolean	是否将用户更新的表单输入框内容作为打印内容（通过迭代每一个表单元素来实现）
+                    prepend: null,
+                    manuallyCopyFormValues: false,
+                    deferred: $.Deferred(function () { // 任何可用的jQuery.Deferred对象 当打印函数被调用时的jQuery.Deferred对象
+
+                    })
+                });
+            }
+        </script>
+    </body>
+
+</html>

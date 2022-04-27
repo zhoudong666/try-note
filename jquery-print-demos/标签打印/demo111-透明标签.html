@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>demo111-透明标签</title>
+    <meta name="viewport" content="width=device-width">
+    <style type='text/css'>
+      /* ================= 通用类 start ================= */
+      html,
+      body,
+      div {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* 打印item容器相对定位 */
+      .print-item {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .writing-mode {
+        writing-mode: tb-rl;
+        writing-mode: vertical-rl;
+        -webkit-writing-mode: vertical-rl;
+      }
+
+      /* 打印的item所有内容都绝对定位 */
+      .print-item * {
+        margin: 0;
+        padding: 0;
+        font-size: 4mm;
+        position: absolute;
+        -webkit-print-color-adjust: exact;
+        overflow: hidden;
+      }
+
+      /* 水平线 垂直线 默认宽高 */
+      .h-line,
+      .v-line {
+        display: inline-block;
+        background: #000;
+      }
+
+      /* 水平线 */
+      .h-line {
+        height: 0.2mm;
+        width: 99mm;
+      }
+
+      /* 垂直线 */
+      .v-line {
+        height: 99mm;
+        width: 0.2mm;
+      }
+
+      /* 文字在盒子里居中对齐 */
+      .tac {
+        text-align: center;
+      }
+
+      /* 文字在盒子里两端对齐 */
+      .tsb {
+        text-align-last: justify;
+        text-align: justify;
+      }
+
+      /* 强制每个打印item为一页 */
+      .PageCss {
+        page-break-before: auto;
+        page-break-after: always;
+      }
+
+      /* 字体加粗 */
+      .strong {
+        font-weight: 700;
+      }
+
+      .letter-spacing1 {
+        letter-spacing: 1mm;
+        font-size: 4mm;
+      }
+
+      /* 用于分隔打印item之间的距离 */
+      .gap {
+        height: 10px;
+      }
+
+      /* 瞬时间旋转90度 */
+      .rotate90 {
+        transform-origin: 0 0;
+        transform: translate(0, 0) rotate(90deg);
+        left: 66mm;
+        top: 10mm;
+      }
+
+      /* ================= 通用类 end ================= */
+      .line-height5 {
+        line-height: 5mm;
+      }
+
+      .line-height38 {
+        line-height: 3.8mm;
+        font-size: 3mm;
+      }
+
+      .width68 {
+        width: 68mm;
+      }
+
+      .width100 {
+        width: 100mm;
+      }
+
+      .height121 {
+        height: 121mm;
+      }
+
+      .top121 {
+        top: 121mm;
+      }
+
+      .left19 {
+        left: 19mm;
+      }
+
+      .left29 {
+        left: 29mm;
+      }
+
+      .left39 {
+        left: 39mm;
+      }
+
+      .left49 {
+        left: 49mm;
+      }
+
+      .left9 {
+        left: 9mm;
+      }
+
+      .left678 {
+        left: 67.8mm;
+      }
+
+      .left66 {
+        left: 66mm;
+      }
+
+      .left26 {
+        left: 26mm;
+      }
+
+      .left36 {
+        left: 36mm;
+      }
+
+      .left46 {
+        left: 46mm;
+      }
+
+      .left56 {
+        left: 56mm;
+      }
+
+      .left67 {
+        left: 67mm;
+      }
+
+      .top19 {
+        top: 19mm;
+      }
+
+      .qrcode {
+        width: 12mm;
+        height: 12mm;
+        top: 2mm;
+        left: 55mm;
+      }
+
+      .top70 {
+        top: 62mm;
+        /* ===========top: 70mm;============ */
+      }
+
+      .width5 {
+        width: 5mm;
+      }
+
+      .left63 {
+        left: 63mm;
+      }
+
+      .left9 {
+        left: 9mm;
+      }
+
+      .left54 {
+        left: 54mm;
+      }
+
+      .width18 {
+        width: 18mm;
+      }
+
+      .top104 {
+        top: 110.5mm;
+        /* ==========top: 103.5mm;============= */
+      }
+
+      .top28 {
+        top: 28mm;
+      }
+
+      .top109 {
+        top: 115mm;
+        /* ==========top: 109mm;============= */
+      }
+
+      .width49 {
+        width: 49mm;
+      }
+
+      .left51 {
+        left: 51mm;
+      }
+
+      .height30 {
+        height: 49mm;
+        /* =========height: 30mm;============= */
+      }
+
+      .over-hide {
+        overflow: hidden;
+      }
+
+      .height83 {
+        height: 83mm;
+      }
+
+      .letter-spacing6 {
+        letter-spacing: 0.6mm;
+      }
+
+      .left11 {
+        left: 11mm;
+      }
+
+      .left21 {
+        left: 21mm;
+      }
+
+      .left31 {
+        left: 31mm;
+      }
+
+      .left41 {
+        left: 41mm;
+      }
+
+      .left51 {
+        left: 51mm;
+      }
+
+      .width4 {
+        width: 3.5mm;
+      }
+
+      .font35 {
+        font-size: 3.5mm
+          /* =========font-size: 4mm;============= */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div style="position: fixed;top: 10px;right: 500px;">
+      <input type="button" onclick=" print()" value="打印" />
+    </div>
+    <div style="margin: 0 300px">
+      <div id="printContent" style="margin: 0 1.5mm">打印容器</div>
+    </div>
+
+    <script src="jquery.min.js"></script>
+    <!-- jquery的打印插件 -->
+    <script src="../jQuery.print.js"></script>
+    <!-- 此js插件用于将需要转换的内容转为 条形码 -->
+    <!-- <script type="text/javascript" src="JsBarcode.all.js"></script> -->
+    <!-- 此js插件用于将需要转换的内容转为 二维码 -->
+    <script type="text/javascript" src="jquery.qrcode.min.js"></script>
+    <script>
+      // 获取模拟参数
+      function getList() {
+        var list = [{
+          "wbs1": "B23609202882-03-01-HM-Y A01",
+          "wbs2": "B23609202882-03-01-HM-Z A01",
+          "wbs3": "B23609202882-03-01-CM-Y A01",
+          "wbs4": "B23609202882-03-01-CM-Z A01",
+          "wbs5": "B23609202882-03-01-QM A01",
+          "yb1": "吉林四平公主岭大龄物流园66kV智能变啊啊啊",
+          "yb2": "主变及35kV继电室保信子站采集柜",
+          "NO": "B23609202882-03-01-21",
+          "bm": "A01",
+          "yj": "99/99",
+        }]
+        for (let i = 0; i < 1; i++) {
+          list.push({
+            "wbs1": "B23609202882-03-01-HM-Y A02",
+            "wbs2": "B23609202882-03-01-HM-Z A02",
+            "wbs3": "B23609202882-03-01-CM-Y A02",
+            "wbs4": "B23609202882-03-01-CM-Z A02",
+            "wbs5": "B23609202882-03-01-QM A02",
+            "yb1": "三峡大坝",
+            "yb2": "主变及35kV继电室保信子站采集柜",
+            "NO": "B23609202882-03-02-21",
+            "bm": "A02",
+            "yj": "99/99",
+          })
+        }
+        return list;
+      }
+
+      // 根据数据拼接模板
+      function getTemp(data) {
+        var arr = [];
+        $.each(data, function (index, item) {
+          var canvas = $('<div></div>').qrcode(item.wbs1).find('canvas').get(0);
+          var img_src = canvas.toDataURL('image/jpg');//将二维码转换为图片 
+          var temp = `<div class="print-item PageCss width68" style="height: 122mm">
+                        <i class="h-line width68 no-print"></i>
+                        <i class="h-line width68 top121 no-print"></i> 
+                        <i class="v-line height121 no-print"></i>
+                        <i class="v-line height121 left21 no-print"></i>
+                        <i class="v-line height121 left31 no-print"></i>
+                        <i class="v-line height121 left41 no-print"></i>
+                        <i class="v-line height121 left51 no-print"></i>
+                        <i class="v-line height121 left11 no-print"></i>
+                        <i class="v-line height121 left678 no-print"></i>
+                        <span class="width100 top28 left49 rotate90">${item.wbs1}</span>
+                        <span class="width100 top28 left39 rotate90">${item.wbs2}</span>
+                        <span class="width100 top28 left29 rotate90">${item.wbs3}</span>
+                        <span class="width100 top28 left19 rotate90">${item.wbs4}</span>
+                        <span class="width100 top28 left9 rotate90">${item.wbs5}</span>
+                        <img class="qrcode" src="${img_src}" alt="" />
+                        <span class="top19 width49 left67 rotate90 font35">${item.NO}</span>
+                        <span class="top70 left63 width4 line-height38 height30 over-hide writing-mode">${item.yb2}</span>
+                        <span class="top19 left54 width5 line-height5 height83 over-hide writing-mode letter-spacing6">${item.yb1}</span>
+                        <span class="top104 left51 width18 tac">${item.bm}</span>
+                        <span class="top109 left51 width18 tac">${item.yj}</span>
+                    </div>
+                    <div class="gap no-print"></div>`
+          arr.push(temp)
+        })
+        arr.push()
+        return arr.join('')
+      }
+
+      // 步骤一  获取模拟参数 
+      var list = getList();
+      //  步骤二  根据数据拼接模板 
+      var temp = getTemp(list);
+      $('#printContent').html(temp)
+      // 步骤三  调用打印 
+      function print() {
+        jQuery('#printContent').print({
+          globalStyles: true,  // Boolean	是否包含父文档的样式
+          mediaPrint: true,  // Boolean是否包含media='print'的链接标签。会被globalStyles选项覆盖
+          stylesheet: null,  // URL - string	外部样式表的URL地址
+          noPrintSelector: ".no-print",  // 任何可用的jQuery选择器 不想打印的元素的jQuery选择器
+          iframe: true,  // 默认true，如果没有iframe选择器被传入会创建一个隐藏的iframe	任何可用的jQuery选择器或Boolean	是否使用一个iframe来替代打印表单的弹出窗口
+          append: null,  // Boolean	是否将用户更新的表单输入框内容作为打印内容（通过迭代每一个表单元素来实现）
+          prepend: null,
+          manuallyCopyFormValues: false,
+          deferred: $.Deferred(function () { // 任何可用的jQuery.Deferred对象 当打印函数被调用时的jQuery.Deferred对象
+
+          })
+        });
+      }
+    </script>
+  </body>
+
+</html>

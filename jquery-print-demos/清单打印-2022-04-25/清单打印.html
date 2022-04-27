@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>清单打印</title>
+  <meta name="viewport" content="width=device-width">
+  <style type='text/css'>
+    html,
+    body,
+    div,
+    table {
+      margin: 0;
+      padding: 0;
+      font-size: 10px;
+    }
+
+    /* 打印item容器相对定位 */
+    /* .print-item {
+      position: relative;
+      display: inline-block;
+
+      width: calc(50% - 10mm);
+      height: 65mm;
+      margin: 2mm 4mm 0; 
+    } */
+
+    /* 打印的item所有内容都绝对定位 */
+    /* .print-item div {
+      position: absolute;
+      left: 40%;
+      font-size: 2mm;
+      -webkit-print-color-adjust: exact;
+      overflow: hidden;
+    } */
+
+
+    /* 强制每个打印item为一页 */
+    .PageCss {
+      page-break-before: auto;
+      page-break-after: always;
+    }
+
+    /* #printContent {
+      margin: 0 10mm;
+    } */
+
+    .tac {
+      text-align: center;
+    }
+
+    .margin-bottom-10 {
+      margin-bottom: 10px;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .top-number span {
+      flex: 1;
+    }
+
+    .info-table,
+    .content-table,
+    td,
+    th {
+      border-collapse: collapse;
+      border: 1px solid #000;
+    }
+
+    table,
+    tr {
+      width: 100%;
+      text-align: center;
+    }
+
+    .order {
+      height: 20px;
+      line-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="position: fixed;top: 10px;right: 500px;z-index: 999999;">
+    <input type="button" onclick=" print1()" value="打印1" />
+    <input type="button" onclick=" print2()" value="打印2" />
+  </div>
+  <hr>
+  <div style="margin:0 200px;">
+    <div id="printContent">
+    </div>
+  </div>
+
+  <script src="jquery.min.js"></script>
+  <!-- jquery的打印插件 -->
+  <script src="jQuery.print.min.js"></script>
+  <!-- <script src="Print.js"></script> -->
+
+  <script>
+    /* @Print.js
+ * DH (http://denghao.me)
+ * 2017-7-14
+ */
+    (function (window, document) {
+      var Print = function (dom, options) {
+        if (!(this instanceof Print)) return new Print(dom, options);
+        this.options = this.extend(
+          {
+            noPrint: ".no-print",
+            onStart: function () { },
+            onEnd: function () { },
+          },
+          options
+        );
+
+        if (typeof dom === "string") {
+          this.dom = document.querySelector(dom);
+        } else {
+          this.dom = dom;
+        }
+
+        this.init();
+      };
+      Print.prototype = {
+        init: function () {
+          var content = this.getStyle() + this.getHtml();
+          this.writeIframe(content);
+        },
+        extend: function (obj, obj2) {
+          for (var k in obj2) {
+            obj[k] = obj2[k];
+          }
+          return obj;
+        },
+
+        getStyle: function () {
+          var str = "",
+            styles = document.querySelectorAll("style,link");
+          for (var i = 0; i < styles.length; i++) {
+            str += styles[i].outerHTML;
+          }
+          str +=
+            "<style>" +
+            (this.options.noPrint ? this.options.noPrint : ".no-print") +
+            "{display:none;}</style>";
+
+          return str;
+        },
+
+        getHtml: function () {
+          var inputs = document.querySelectorAll("input");
+          var textareas = document.querySelectorAll("textarea");
+          var selects = document.querySelectorAll("select");
+
+          for (var k in inputs) {
+            if (inputs[k].type == "checkbox" || inputs[k].type == "radio") {
+              if (inputs[k].checked == true) {
+                inputs[k].setAttribute("checked", "checked");
+              } else {
+                inputs[k].removeAttribute("checked");
+              }
+            } else if (inputs[k].type == "text") {
+              inputs[k].setAttribute("value", inputs[k].value);
+            }
+          }
+
+          for (var k2 in textareas) {
+            if (textareas[k2].type == "textarea") {
+              textareas[k2].innerHTML = textareas[k2].value;
+            }
+          }
+
+          for (var k3 in selects) {
+            if (selects[k3].type == "select-one") {
+              var child = selects[k3].children;
+              for (var i in child) {
+                if (child[i].tagName == "OPTION") {
+                  if (child[i].selected == true) {
+                    child[i].setAttribute("selected", "selected");
+                  } else {
+                    child[i].removeAttribute("selected");
+                  }
+                }
+              }
+            }
+          }
+
+          return this.dom.outerHTML;
+        },
+
+        writeIframe: function (content) {
+          var w,
+            doc,
+            iframe = document.createElement("iframe"),
+            f = document.body.appendChild(iframe);
+          iframe.id = "myIframe";
+          iframe.style = "position:absolute;width:0;height:0;top:-10px;left:-10px;";
+
+          w = f.contentWindow || f.contentDocument;
+          doc = f.contentDocument || f.contentWindow.document;
+          doc.open();
+          doc.write(content);
+          doc.close();
+          this.toPrint(w, function () {
+            document.body.removeChild(iframe);
+          });
+        },
+
+        toPrint: function (w, cb) {
+          var _this = this;
+          w.onload = function () {
+            try {
+              setTimeout(function () {
+                w.focus();
+                typeof _this.options.onStart === "function" &&
+                  _this.options.onStart();
+                if (!w.document.execCommand("print", false, null)) {
+                  w.print();
+                }
+                typeof _this.options.onEnd === "function" && _this.options.onEnd();
+                w.close();
+                cb && cb();
+              });
+            } catch (err) {
+              console.log("err", err);
+            }
+          };
+        },
+      };
+      window.Print = Print;
+    })(window, document);
+
+
+    function a4Template (titleObj, list) {
+      var arr = []
+      list.forEach((element, i) => {
+        arr.push(`<h4 class="tac">装置序列号清单 <span style="float:right">${i + 1} / ${list.length}</span></h4>
+      <div class="top-number flex margin-bottom-10">
+        <span>送货单号：${titleObj.FHZJLSH}</span>
+        <span>销售订单号：${titleObj.XSDDH}</span>
+        <span>工厂：${titleObj.GCMS} - ${titleObj.BMMC}</span>
+      </div>
+      <div>
+        <table class="info-table margin-bottom-10">
+          <tr>
+            <td style="width: 8%;">收货单位</td>
+            <td style="text-align: left;">${titleObj.SHDWMC}</td>
+            <td style="width: 11%;">*收货人</td>
+            <td style="width: 11%;">${titleObj.SHRXM}</td>
+            <td style="width: 10%;">收货人电话</td>
+            <td style="width: 10%;">${titleObj.SHRLXFS}</td>
+          </tr>
+          <tr>
+            <td>收货地址</td>
+            <td style="text-align: left;">${titleObj.SHDZPJ}</td>
+            <td>要求到货时间</td>
+            <td>${titleObj.DHSJYQSTR}</td>
+            <td>运输单位</td>
+            <td>${titleObj.YSDW}</td>
+          </tr>
+          <tr>
+            <td>工程名称</td>
+            <td style="text-align: left;">${titleObj.XMDYMC}</td>
+            <td>WBS号</td>
+            <td colspan="3">${titleObj.XMDYH}</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <table class="content-table" id="content_table">
+          <tr><th class="name">品名</th><th class="num">数量</th><th class="order">装置序列号</th></tr>
+          ${conTableTemp(element)}
+        </table>
+      </div><div class="PageCss"></div>`)
+      });
+      return arr.join('')
+    }
+
+    function conTableTemp (list) {
+      function getOrderTd (orderList) {
+        var orderTempArr = []
+        orderList.forEach(i => {
+          orderTempArr.push(`<div class="order">${i}</div>`)
+        })
+        return orderTempArr.join('')
+      }
+      var trTempArr = []
+      list.forEach(i => {
+        trTempArr.push(`<tr><td>${i.MATERIELNAME}</td><td>${i.MENGE}</td><td>${getOrderTd(i.EQUIPCODE)}</td></tr>`)
+      })
+      return trTempArr.join('')
+    }
+
+    var data = [
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 1 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 2 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 3 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 4 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 5 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 6 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 7 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 8 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 9 },
+      { MATERIELNAME: 'aaaaa', MENGE: 10, EQUIPCODE: 10 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 11 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 22 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 33 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 44 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 55 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 66 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 77 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 88 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 99 },
+      { MATERIELNAME: 'bbbbbb', MENGE: 10, EQUIPCODE: 1010 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 111 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 222 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 333 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 444 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 555 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 666 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 777 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 888 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 999 },
+      { MATERIELNAME: 'ccc', MENGE: 10, EQUIPCODE: 101010 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 1111 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 2222 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 3333 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 4444 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 5555 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 6666 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 7777 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 8888 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 9999 },
+      { MATERIELNAME: 'eeeeee', MENGE: 10, EQUIPCODE: 10101010 },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff1' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff2' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff3' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff4' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff5' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff6' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff7' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff8' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff9' },
+      { MATERIELNAME: 'fff', MENGE: 10, EQUIPCODE: 'fff10' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg1' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg2' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg3' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg4' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg5' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg6' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg7' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg8' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg9' },
+      { MATERIELNAME: 'gggg', MENGE: 10, EQUIPCODE: 'gggg10' },
+    ]
+    var titleObj = {
+      FHZJLSH: 'FHRDR012109878xxx',
+      XSDDH: '0500788888',
+      GCMS: '这是工厂GCMS',
+      BMMC: '工厂BMMC',
+      SHDWMC: '收货单位',
+      SHRXM: '收货人',
+      SHRLXFS: 13312341234,
+      SHDZPJ: '收货地址收货地址收货地址',
+      DHSJYQSTR: '2022-04-26',
+      YSDW: '运输单位',
+      XMDYMC: '工程名称工程名称',
+      XMDYH: 'wbs 1231231424'
+    }
+    var titleObj2 = {
+      FHZJLSH: 'FHRDR012109878xxx22',
+      XSDDH: '050078888822',
+      GCMS: '这是工厂GCM2S',
+      BMMC: '工厂BMMC2',
+      SHDWMC: '收货单位2',
+      SHRXM: '收货人',
+      SHRLXFS: 13312341234,
+      SHDZPJ: '收货地址收货地址收货地址',
+      DHSJYQSTR: '2022-04-26',
+      YSDW: '运输单位',
+      XMDYMC: '工程名称工程名称',
+      XMDYH: 'wbs 1231231424'
+    }
+    var dealDataArr = function (data) {
+      // 将原始数据 以 chunk 数量分组
+      var chunk = 43, len = data.length, resultArr = []
+      for (var i = 0; i < len; i += chunk) {
+        resultArr.push(data.slice(i, i + chunk))
+      }
+      // 对分组的 二维数组, 双重遍历处理成想要的数据格式
+      var arr2 = []
+      resultArr.forEach((item1, i1) => {
+        var obj = {}, arr3 = []
+        item1.forEach(item2 => {
+          if (!obj[item2.MATERIELNAME]) {
+            obj[item2.MATERIELNAME] = item2.MATERIELNAME
+            arr3.push({ MATERIELNAME: item2.MATERIELNAME, MENGE: item2.MENGE, EQUIPCODE: [item2.EQUIPCODE] })
+          } else {
+            arr3[arr3.length - 1].EQUIPCODE.push(item2.EQUIPCODE)
+          }
+        })
+        arr2.push(arr3)
+      })
+      console.log('arr2', arr2);
+      return arr2
+    }
+    $('#printContent').append(a4Template(titleObj, dealDataArr(data)))
+    $('#printContent').append(a4Template(titleObj2, dealDataArr(data)))
+
+    // $('#printContent').html(temp)
+
+    // 步骤三  !!!!!!!!!!!!!!!!!!!!!!调用打印  方式1 使用Print.js打印,纯原生js 
+    function print1 () {
+      Print('#printContent', {
+        onStart: function () {
+          console.log('onStart', new Date())
+        },
+        onEnd: function () {
+          console.log('onEnd', new Date())
+        }
+      })
+    }
+    // !!!!!!!!!!!!!!!!!!!!!!调用打印  方式2 使用jQuery.print.min.js打印,使用jquery库 
+    function print2 () {
+      $('#printContent').html()
+      jQuery('#printContent').print({
+        globalStyles: true,  // Boolean	是否包含父文档的样式
+        mediaPrint: true,  // Boolean是否包含media='print'的链接标签。会被globalStyles选项覆盖
+        stylesheet: null,  // URL - string	外部样式表的URL地址
+        noPrintSelector: ".no-print",  // 任何可用的jQuery选择器 不想打印的元素的jQuery选择器
+        iframe: true,  // 默认true，如果没有iframe选择器被传入会创建一个隐藏的iframe	任何可用的jQuery选择器或Boolean	是否使用一个iframe来替代打印表单的弹出窗口
+        append: null,  // Boolean	是否将用户更新的表单输入框内容作为打印内容（通过迭代每一个表单元素来实现）
+        prepend: null,
+        manuallyCopyFormValues: false,
+        deferred: $.Deferred(function () { // 任何可用的jQuery.Deferred对象 当打印函数被调用时的jQuery.Deferred对象
+        })
+      });
+    }
+  </script>
+</body>
+
+</html>
